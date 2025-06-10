@@ -1,0 +1,61 @@
+import pytest
+from unittest.mock import Mock, patch
+from challenge2 import create_objects_from_goal
+
+def test_create_objects_from_goal():
+    # Mock API and its methods
+    mock_api = Mock()
+    mock_api.get_goal_map.return_value = {
+        "goal": [
+            [None, "POLYANET", None],
+            ["SOLOON_RED", None, "COMETH_UP"],
+            [None, None, None],
+        ]
+    }
+    
+    # Test dry run
+    create_objects_from_goal(mock_api, dry_run=True)
+    
+    # Verify API was not called for creation
+    assert not mock_api.create_polyanet.called
+    assert not mock_api.create_soloon.called
+    assert not mock_api.create_cometh.called
+    
+    # Test actual creation
+    create_objects_from_goal(mock_api, dry_run=False)
+    
+    # Verify API was called correctly
+    assert mock_api.create_polyanet.call_count == 1
+    assert mock_api.create_soloon.call_count == 1
+    assert mock_api.create_cometh.call_count == 1
+    
+    # Verify the correct positions were used
+    polyanet_call = mock_api.create_polyanet.call_args[0][0]
+    assert polyanet_call.row == 0
+    assert polyanet_call.column == 1
+    
+    soloon_call = mock_api.create_soloon.call_args
+    assert soloon_call[0][0].row == 1
+    assert soloon_call[0][0].column == 0
+    assert soloon_call[0][1] == "red"  # color is the second positional argument
+    
+    cometh_call = mock_api.create_cometh.call_args
+    assert cometh_call[0][0].row == 1
+    assert cometh_call[0][0].column == 2
+    assert cometh_call[0][1] == "up"  # direction is the second positional argument
+
+def test_error_handling():
+    # Mock API that raises an exception
+    mock_api = Mock()
+    mock_api.get_goal_map.return_value = {
+        "goal": [
+            ["POLYANET", "POLYANET"],  # Two objects to test multiple calls
+        ]
+    }
+    mock_api.create_polyanet.side_effect = [Exception("API Error"), None]  # First call fails, second succeeds
+    
+    # Should not raise an exception
+    create_objects_from_goal(mock_api, dry_run=False)
+    
+    # Verify both calls were attempted
+    assert mock_api.create_polyanet.call_count == 2 
