@@ -75,6 +75,22 @@ python challenge2.py
 python challenge2_cleanup.py
 ```
 
+## Dry Run (Test Mode)
+
+If you want to see what objects would be created without making any changes or API calls (a "dry run"), you can do so from a Python shell:
+
+```python
+from challenge2 import create_objects_from_goal
+from megaverse.api import MegaverseAPI
+
+api = MegaverseAPI()
+create_objects_from_goal(api, dry_run=True)
+```
+
+This will print out all the actions that would be performed, but will not actually create any objects in the Megaverse.
+
+> **Note:** If you would like a command-line option (e.g., `python challenge2.py --dry-run`), let me know and I can add it for you!
+
 ## Testing
 
 Run the test suite:
@@ -116,9 +132,6 @@ The test suite covers:
 - Edge cases
 - Property validation
 
-## Contributing
-
-Feel free to submit issues and enhancement requests!
 
 ## License
 

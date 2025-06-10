@@ -1,5 +1,10 @@
+"""
+Test suite for Challenge 2 API parsing functionality.
+Tests the parsing of goal maps from the API response.
+"""
+
 import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 from challenge2_goal_parser import parse_goal_map
 
 def test_parse_goal_map_from_api():
@@ -7,7 +12,7 @@ def test_parse_goal_map_from_api():
     goal_map = {
         "goal": [
             [None, "POLYANET", None],
-            ["SOLOON_RED", None, "COMETH_UP"],
+            ["RED_SOLOON", None, "UP_COMETH"],
             [None, None, None],
         ]
     }

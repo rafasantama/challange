@@ -17,6 +17,7 @@ The script supports three types of objects:
 import os
 import time
 import json
+import argparse
 from dotenv import load_dotenv
 from megaverse.api import MegaverseAPI
 from challenge2_goal_parser import parse_goal_map
@@ -51,7 +52,11 @@ def create_objects_from_goal(api: MegaverseAPI, dry_run: bool = False) -> None:
     and provides progress feedback through logging.
     """
     print("Fetching goal map...")
-    goal_map = api.get_goal_map()
+    try:
+        goal_map = api.get_goal_map()
+    except Exception as e:
+        print(f"Error fetching goal map: {e}")
+        return
     
     print("Parsing goal map...")
     objects = parse_goal_map(goal_map)
@@ -101,8 +106,11 @@ def main():
     5. Handles any errors that occur during the process
     """
     load_dotenv()
+    parser = argparse.ArgumentParser(description="Crossmint Challenge 2: Logo Pattern Creator")
+    parser.add_argument('--dry-run', action='store_true', help='Print actions without making API calls')
+    args = parser.parse_args()
     api = MegaverseAPI()
-    create_objects_from_goal(api)
+    create_objects_from_goal(api, dry_run=args.dry_run)
 
 if __name__ == "__main__":
     main() 
